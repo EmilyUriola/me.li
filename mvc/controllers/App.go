@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"hash/fnv"
+	"html/template"
 	"net/http"
 	"net/url"
 
@@ -21,6 +22,7 @@ type UrlStruct struct {
 	Short string `json:"short,omitempty"`
 }
 
+var tpl *template.Template
 var hostName string = "http://localhost:8011/"
 var pageData pageDataStruct
 var notifyType int
@@ -98,6 +100,12 @@ func DeleteUrl(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ErrorHandler(w http.ResponseWriter, r *http.Request) {
+	pageData = pageDataStruct{Title: "404"}
+	tpl = template.Must(template.ParseGlob("views/*.html"))
+	tpl.ExecuteTemplate(w, "error.html", pageData)
+}
+
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	shortCode := r.URL.Path[1:]
 	pageData = pageDataStruct{Title: "Meli", ShortUrl: "", LongUrl: ""}
@@ -106,7 +114,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if len(shortCode) != 0 {
 		redirectUrl, err := models.RedisDbGet(shortCode)
 		if err != nil {
-			redirectUrl = hostName + "404"
+			redirectUrl = hostName + "/error404/" + shortCode
 		}
 		RedirectTo(w, r, redirectUrl) // redirect to long url
 

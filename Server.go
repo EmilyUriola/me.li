@@ -19,6 +19,7 @@ func main() {
 	router.HandleFunc("/urls/bulk", controllers.CreateUrls).Methods("POST")
 	router.HandleFunc("/urls/{id}", controllers.GetUrl).Methods("GET")
 	router.HandleFunc("/urls/{id}", controllers.DeleteUrl).Methods("DELETE")
+	router.HandleFunc("/error404/{id}", controllers.ErrorHandler)
 	router.HandleFunc("/{id}", controllers.HomeHandler)
 	http.Handle("/", router)
 
