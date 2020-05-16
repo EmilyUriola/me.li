@@ -17,7 +17,7 @@ func Hash(s string) uint32 {
 
 // Redis_db_init Init Redis
 func RedisDbInit() {
-	redisAddr := "127.0.0.1:6379"
+	redisAddr := "opsworks-redis-ro.acnysi.ng.0001.use2.cache.amazonaws.com:6379"
 	redisPool = &redis.Pool{
 		Dial: func() (redis.Conn, error) {
 			conn, err := redis.Dial("tcp", redisAddr)

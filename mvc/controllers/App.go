@@ -16,7 +16,7 @@ type UrlStruct struct {
 	Short string `json:"short,omitempty"`
 }
 
-var hostName string = "http://localhost:8011/"
+var hostName string = "http://ec2-3-14-12-210.us-east-2.compute.amazonaws.com:8011/"
 var notifyType int
 var notifyMsg string
 var t *template.Template
