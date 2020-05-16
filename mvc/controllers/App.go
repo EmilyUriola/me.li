@@ -11,22 +11,15 @@ import (
 	"github.com/me.li/mvc/models"
 )
 
-type pageDataStruct struct {
-	Title    string
-	ShortUrl string
-	LongUrl  string
-}
-
 type UrlStruct struct {
 	Long  string `json:"long,omitempty"`
 	Short string `json:"short,omitempty"`
 }
 
-var tpl *template.Template
 var hostName string = "http://localhost:8011/"
-var pageData pageDataStruct
 var notifyType int
 var notifyMsg string
+var t *template.Template
 
 func Hash(s string) uint32 {
 	h := fnv.New32a()
@@ -100,15 +93,8 @@ func DeleteUrl(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ErrorHandler(w http.ResponseWriter, r *http.Request) {
-	pageData = pageDataStruct{Title: "404"}
-	tpl = template.Must(template.ParseGlob("views/*.html"))
-	tpl.ExecuteTemplate(w, "error.html", pageData)
-}
-
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	shortCode := r.URL.Path[1:]
-	pageData = pageDataStruct{Title: "Meli", ShortUrl: "", LongUrl: ""}
 	notifyType = 0
 
 	if len(shortCode) != 0 {
