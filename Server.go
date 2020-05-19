@@ -31,8 +31,9 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/urls", controllers.CreateUrl).Methods("POST")
 	router.HandleFunc("/urls/bulk", controllers.CreateUrls).Methods("POST")
+	router.HandleFunc("/urls/bulk", controllers.DeleteUrls).Methods("DELETE")
+	router.HandleFunc("/urls", controllers.CreateUrl).Methods("POST")
 	router.HandleFunc("/urls/{id}", controllers.GetUrl).Methods("GET")
 	router.HandleFunc("/urls/{id}", controllers.DeleteUrl).Methods("DELETE")
 	router.HandleFunc("/{id}", controllers.HomeHandler)

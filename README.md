@@ -39,4 +39,12 @@ curl -X POST http://localhost:8011/urls/bulk -d "[{\"long\": \"http://www.amazon
 #Respuesta:
 {"message": "Delete URL shortified.", "short_url": "http://localhost:8011/37044323"}
 
+##Eliminar Bulk URL:
+
+``` shell
+curl -X DELETE http://localhost:8011/urls/bulk -d "[{\"short\": \"1736520920\"},{\"short\": \"1421392713\"}]" 
+```
+#Respuesta:
+{"message": "Delete URL shortified.", "short_url": "["http://localhost:8011/889289591","http://localhost:8011/1736520920"]"}
+
 ##Uso de URL:

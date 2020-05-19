@@ -17,7 +17,8 @@ func Hash(s string) uint32 {
 
 // Redis_db_init Init Redis
 func RedisDbInit() {
-	redisAddr := "opsworks-redis.acnysi.ng.0001.use2.cache.amazonaws.com:6379"
+	//redisAddr := "elc-tutorial-001.acnysi.0001.use2.cache.amazonaws.com:6379"
+	redisAddr := "localhost:6379"
 	redisPool = &redis.Pool{
 		Dial: func() (redis.Conn, error) {
 			conn, err := redis.Dial("tcp", redisAddr)
@@ -26,13 +27,13 @@ func RedisDbInit() {
 	}
 }
 
-func RedisDbSave(longUrl string) string {
+func RedisDbSave(longUrl string) (interface{}, error, string) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
 	newShortCode := Hash(longUrl)
-	redisConn.Do("SET", newShortCode, longUrl)
-	return fmt.Sprint(newShortCode)
+	red, err := redisConn.Do("SET", newShortCode, longUrl)
+	return red, err, fmt.Sprint(newShortCode)
 }
 
 func RedisDbGet(shortCode string) (string, error) {
@@ -43,15 +44,38 @@ func RedisDbGet(shortCode string) (string, error) {
 	return redirectUrl, err
 }
 
-// Function to add two numbers
-func RedisDbDel(shortCode string) (string, error) {
+func RedisDbDel(shortCode string) (interface{}, error) {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
 
-	redirectUrl, err := redis.String(redisConn.Do("DEL", shortCode))
+	redirectUrl, err := redisConn.Do("DEL", shortCode)
 	return redirectUrl, err
 }
 
+func RedisDbDelBulks(urls []string, hostName string) []string {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+	cad := make([]string, 0)
+	for _, value := range urls {
+		cad = append(cad, hostName+value)
+		redisConn.Do("DEL", value)
+	}
+	return cad
+}
+
+func RedisDbSaveBulks(urls []string, hostName string) []string {
+	redisConn := redisPool.Get()
+	defer redisConn.Close()
+	cad := make([]string, 0)
+	for _, value := range urls {
+		h := fmt.Sprint(Hash(value))
+		cad = append(cad, hostName+h)
+		redisConn.Do("SET", h, value)
+	}
+	return cad
+}
+
+/*
 func RedisDbSaveBulks(urls []string, hostName string) []string {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
@@ -68,7 +92,6 @@ func RedisDbSaveBulks(urls []string, hostName string) []string {
 	return cad
 }
 
-/*
 func Redis_db_exists(shortLong string) bool {
 	redisConn := redisPool.Get()
 	defer redisConn.Close()
